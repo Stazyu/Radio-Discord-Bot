@@ -1,4 +1,29 @@
 {
+	"name": "bot-radio-discord",
+	"version": "1.0.0",
+	"description": "Radio on Discord Bot",
+	"main": "index.js",
+	"scripts": {
+		"start": "node index.js",
+		"dev": "nodemon index.js",
+		"install": "pnpm install",
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Stazyu/Radio-Discord-Bot.git"
+	},
+	"keywords": [
+		"#Radiobot",
+		"#discordjs",
+		"#Discordbot"
+	],
+	"author": "StazYu",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/Stazyu/Radio-Discord-Bot/issues"
+	},
+	"homepage": "https://github.com/Stazyu/Radio-Discord-Bot#readme",
 	"dependencies": {
 		"@discordjs/opus": "^0.9.0",
 		"@discordjs/voice": "^0.18.0",
@@ -11,5 +36,6 @@
 		"mediaplex": "^1.0.0",
 		"node-fetch": "2.7.0",
 		"ytdl-core": "^4.11.5"
-	}
+	},
+	"devDependencies": {}
 }
