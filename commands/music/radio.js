@@ -2,6 +2,8 @@ const { useQueue } = require("discord-player");
 const { createAudioPlayer, useMainPlayer } = require("discord-player");
 const { SlashCommandBuilder } = require("discord.js");
 const fetch = require("node-fetch");
+const https = require("https");
+
 const { isUrl } = require("../../helpers/validator");
 
 module.exports = {
@@ -27,7 +29,10 @@ module.exports = {
         await player.extractors.loadDefault((ext) => ext !== 'YouTubeExtractor');
         const radioApi = isUrl(query) ? query : await fetch(`https://de1.api.radio-browser.info/json/stations/byname/${query ? query : 'dengerin musik'}`).then(res => res.json());
         console.log(radioApi[0].url);
-        const radioUrl = await fetch(isUrl(query) ? query : radioApi[0].url).then(res => res.url);
+        const insecureAgent = new https.Agent({
+            rejectUnauthorized: false,  // <-- bypass verifikasi TLS
+        });
+        const radioUrl = await fetch(isUrl(query) ? query : radioApi[0].url, { agent: insecureAgent }).then(res => res.url);
 
         if (queue && queue.isPlaying) return queue.node.skip();
         // let's defer the interaction as things can take time to process
