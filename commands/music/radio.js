@@ -194,12 +194,12 @@ module.exports = {
                         console.log('[radio] idle, attempting auto-reconnect...');
                         try {
                             const again = spawnFfmpeg(cand);
-                            const res2 = createAudioResource(again.stdout, { inlineVolume: true });
-                            res2.volume.setVolume(0.9);
-                            player.play(res2);
                             // simpan ffmpeg baru ke state agar /stop bisa membunuh proses yg benar
                             const st = radioState.get(interaction.guildId);
                             if (st) st.ffmpeg = again;
+                            const res2 = createAudioResource(again.stdout, { inlineVolume: true });
+                            res2.volume.setVolume(0.9);
+                            player.play(res2);
                         } catch (e) {
                             console.error('[radio] reconnect failed:', e);
                         }
