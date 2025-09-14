@@ -178,7 +178,7 @@ module.exports = {
                     });
 
                     player.play(resource);
-                    radioState.set(interaction.guildId, { conn, player, ffmpeg }); // <- simpan state
+                    radioState.set(interaction.guildId, { conn, player, ffmpeg: spawnFfmpeg(cand) }); // <- simpan state
 
                     // Tunggu siap atau timeout 6 detik
                     await Promise.race([
