@@ -12,6 +12,10 @@ const { spawn } = require('child_process');
 const fetch = require('node-fetch');
 const https = require('https');
 
+const radioState = require('../../state/radiostate');
+
+// --- konfigurasi ---
+
 const DEFAULT_STATION = 'dengerin musik'; // fallback query
 const TLS_BYPASS = true; // jika HTTPS radio bermasalah; set false bila tidak perlu
 
@@ -174,6 +178,9 @@ module.exports = {
                     });
 
                     player.play(resource);
+                    radioState.set(interaction.guildId, { conn, player, ffmpeg }); // <- simpan state
+
+                    // Tunggu siap atau timeout 6 detik
                     await Promise.race([
                         ready,
                         new Promise((_, rej) => setTimeout(() => rej(new Error('Timeout start audio')), 6000))
@@ -190,6 +197,9 @@ module.exports = {
                             const res2 = createAudioResource(again.stdout, { inlineVolume: true });
                             res2.volume.setVolume(0.9);
                             player.play(res2);
+                            // simpan ffmpeg baru ke state agar /stop bisa membunuh proses yg benar
+                            const st = radioState.get(interaction.guildId);
+                            if (st) st.ffmpeg = again;
                         } catch (e) {
                             console.error('[radio] reconnect failed:', e);
                         }
