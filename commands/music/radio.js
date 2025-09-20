@@ -31,7 +31,7 @@ async function resolveRadioUrl(query) {
     if (isUrl(query)) return query;
 
     const enc = encodeURIComponent(query || DEFAULT_STATION);
-    const rbUrl = `https://de1.api.radio-browser.info/json/stations/byname/${enc}`;
+    const rbUrl = `https://fi1.api.radio-browser.info/json/stations/byname/${enc}`;
 
     const res = await fetch(rbUrl, { timeout: 10000 });
     if (!res.ok) throw new Error(`Radio Browser API error: ${res.status}`);
@@ -91,7 +91,14 @@ function spawnFfmpeg(inputUrl) {
 
     const ff = spawn('ffmpeg', args, { stdio: ['ignore', 'pipe', 'inherit'] });
     ff.on('spawn', () => console.log('[radio] ffmpeg spawned for', inputUrl));
-    ff.on('close', code => console.log('[radio] ffmpeg closed with code', code));
+    ff.on('close', (code) => {
+        console.log('[radio] ffmpeg closed with code', code);
+        const st = radioState.get(interaction.guildId);
+        if (st && st.ffmpeg === ff) {
+            // hanya clear jika yang tertutup adalah proses yang sedang terdaftar
+            st.ffmpeg = undefined;
+        }
+    });
 
     return ff;
 }
@@ -156,6 +163,8 @@ module.exports = {
             // Cleanup ketika channel kosong atau error
             player.on('error', (err) => {
                 console.error('[radio] player error:', err);
+                const st = radioState.get(interaction.guildId);
+                try { st?.ffmpeg?.kill('SIGKILL'); } catch { }
             });
 
             conn.subscribe(player);
