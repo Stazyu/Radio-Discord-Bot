@@ -19,6 +19,8 @@ module.exports = {
         const st = radioState.get(guildId);
         if (st) {
             try {
+                // stop meta watcher
+                try { st.metaWatcher?.stop(); } catch { }
                 // stop player
                 try { st.player.stop(true); } catch { }
                 // kill ffmpeg
